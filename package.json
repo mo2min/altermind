@@ -20,6 +20,7 @@
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
     "apollo-link-http": "^1.5.16",
+    "autoprefixer": "^9.7.4",
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.0",
     "electron": "^8.0.0",
@@ -27,10 +28,12 @@
     "electron-is-dev": "^1.1.0",
     "graphql": "^14.6.0",
     "nodemon": "^2.0.2",
+    "postcss-cli": "^7.1.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.1",
+    "tailwindcss": "^1.2.0",
     "typescript": "^3.7.5",
     "wait-on": "^4.0.0"
   },
@@ -42,6 +45,9 @@
     "electron-build": "electron-builder",
     "release": "npm run react-build && npm run complie && electron-builder --publish=always",
     "build": "npm run react-build && npm run electron-build",
+    "build:styles": "postcss src/tailwind.css -o src/styles.css",
+    "prebuild": "yarn build:styles",
+    "prestart": "yarn build:styles",
     "serve": "concurrently \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && nodemon --exec \"\"electron .\"\""
   },
   "eslintConfig": {
