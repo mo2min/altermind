@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
-import { HashRouter as Router } from "react-router-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
+import Home from "./views/Home";
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
         <Route path="/demo" component={Demo} />
         <Footer />
         */}
+        <Route path="/" exact component={Home} />
       </Router>
     </div>
   );
