@@ -48,7 +48,7 @@
     "build:styles": "postcss src/tailwind.css -o src/styles.css",
     "prebuild": "yarn build:styles",
     "prestart": "yarn build:styles",
-    "serve": "concurrently \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && nodemon --exec \"\"electron .\"\""
+    "serve": "concurrently \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3030 && nodemon --exec \"\"electron .\"\""
   },
   "eslintConfig": {
     "extends": "react-app"
