@@ -21,12 +21,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 const httpLink = createHttpLink({
   // Graphcms.com Momen's Facebook Login
   // uri: "http://localhost:4000/"
-  uri: "http://localhost:1337/graphql"
+  uri: "http://localhost:1337/graphql", // Github v4 API ?
 });
 
 const client = new ApolloClient({
   link: ApolloLink.from([errorLink, httpLink]),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 });
 
 function customeClientQuery(query: any, variables: any): Promise<any> {
@@ -34,10 +34,10 @@ function customeClientQuery(query: any, variables: any): Promise<any> {
     client
       .query({
         query: query,
-        variables: variables
+        variables: variables,
       })
-      .then(data => resolve(data.data))
-      .catch(error => reject(error));
+      .then((data) => resolve(data.data))
+      .catch((error) => reject(error));
   });
 }
 
