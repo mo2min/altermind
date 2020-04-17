@@ -11,7 +11,7 @@ export default function Home() {
         `https://api.github.com/repos/fireb1003/noterepo-repo/contents`,
         {
           headers: {
-            Authorization: "Token 166278492c37eb5265bef0f13f4fc664ca11f616",
+            Authorization: `Token ${process.env.REACT_APP_GITHUB_TOKEN}`, // YA Stupid
             Accept: "application/vnd.github.v3.raw",
           },
         }
@@ -20,13 +20,13 @@ export default function Home() {
       setNotes(notes);
     }
     fetchNotes();
-  });
+  }, []);
 
   async function selectNote(singleNote: any) {
     console.log(singleNote);
     const data = await fetch(singleNote.url, {
       headers: {
-        Authorization: "Token 166278492c37eb5265bef0f13f4fc664ca11f616",
+        Authorization: `Token ${process.env.REACT_APP_GITHUB_TOKEN}`,
         Accept: "application/vnd.github.v3.raw",
       },
     });
@@ -38,6 +38,7 @@ export default function Home() {
     <div className="flex">
       <div className="w-1/4 bg-gray-100 text-left ">
         {notes &&
+          Array.isArray(notes) &&
           notes.map((singleNote) => (
             <h2
               key={singleNote.name}
