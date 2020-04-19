@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Editor, EditorState, CompositeDecorator } from "draft-js";
 import { getStateFromMd } from "../utils/StateFromMd";
 import DraftLink from "../utils/draft/DraftLink";
-export default function MdEditor({ content }: any) {
+export default function MdEditor({ note, onDelete }: any) {
   let [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   function findLinkEntities(
@@ -19,6 +19,15 @@ export default function MdEditor({ content }: any) {
     }, callback);
   }
 
+  const editorRef = React.useRef(null);
+
+  /*
+  const [editorRef, setEditorRef] = React.useState(React.createRef<Editorr>());
+  const setDomEditorRef = (ref: any) => {
+    setEditorRef(ref);
+  };
+  */
+
   useEffect(() => {
     const decorator = new CompositeDecorator([
       {
@@ -27,24 +36,54 @@ export default function MdEditor({ content }: any) {
       },
     ]);
     setEditorState(
-      EditorState.createWithContent(getStateFromMd("" + content), decorator)
+      EditorState.createWithContent(
+        getStateFromMd("" + note.content),
+        decorator
+      )
     );
-  }, [content]);
+  }, [note]);
 
   return (
     <div>
-      <Editor editorState={editorState} onChange={setEditorState} />
+      <Editor
+        editorState={editorState}
+        onChange={setEditorState}
+        ref={editorRef}
+      />
       <div>
         <button
           onClick={() => {
-            console.log("Welcome ya Basha");
+            const currHtml = (editorRef.current as any).editor.innerHTML;
+            console.log(currHtml);
           }}
           className="px-2 py-1 rounded-lg bg-green-400 text-green-800 text-xl font-light uppercase shadow-md hover:shadow-lg"
         >
           Save
         </button>
+
+        <button
+          onClick={async () => {
+            console.log(note);
+
+            await fetch(note.url, {
+              headers: {
+                Authorization: `Token ${process.env.REACT_APP_GITHUB_TOKEN}`, // YA Stupid
+                Accept: "application/vnd.github.v3.raw",
+              },
+              method: "DELETE",
+              body: JSON.stringify({
+                message: "Delete file",
+                sha: note.sha,
+              }),
+            });
+            onDelete();
+          }}
+          className="px-2 py-1 rounded-lg bg-red-400 text-green-800 text-xl font-light uppercase shadow-md hover:shadow-lg"
+        >
+          Delete
+        </button>
         <div>
-          <pre>{content}</pre>
+          <pre>{note.content}</pre>
         </div>
       </div>
     </div>

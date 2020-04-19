@@ -3,6 +3,9 @@
 # Content Repository
 /repo
 
+# Electron dist
+/dist
+
 # dependencies
 /node_modules
 /.pnp

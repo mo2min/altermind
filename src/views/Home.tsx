@@ -1,26 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MdEditor from "../components/MdEditor";
+import SideNotes from "../components/notes/SideNotes";
 
 export default function Home() {
-  const [notes, setNotes] = useState([] as any[]);
   const [selectedNote, setSelectedNote] = useState({} as any);
-
-  useEffect(() => {
-    async function fetchNotes() {
-      const data = await fetch(
-        `https://api.github.com/repos/fireb1003/noterepo-repo/contents`,
-        {
-          headers: {
-            Authorization: `Token ${process.env.REACT_APP_GITHUB_TOKEN}`, // YA Stupid
-            Accept: "application/vnd.github.v3.raw",
-          },
-        }
-      );
-      const notes = (await data.json()) as any[];
-      setNotes(notes);
-    }
-    fetchNotes();
-  }, []);
+  const [fileDeletedCounter, setFileDeletedCounter] = useState(0);
 
   async function selectNote(singleNote: any) {
     console.log(singleNote);
@@ -34,23 +18,22 @@ export default function Home() {
     setSelectedNote(singleNote);
   }
 
+  const fileDeleted = () => {
+    // Do somthing to notify SideNotes
+    setFileDeletedCounter(1 + fileDeletedCounter);
+    console.log(fileDeletedCounter);
+  };
+
   return (
     <div className="flex">
       <div className="w-1/4 bg-gray-100 text-left ">
-        {notes &&
-          Array.isArray(notes) &&
-          notes.map((singleNote) => (
-            <h2
-              key={singleNote.name}
-              className="text-2xl"
-              onClick={() => selectNote(singleNote)}
-            >
-              {singleNote.name.replace(".md", "")}
-            </h2>
-          ))}
+        <SideNotes
+          onSelectNote={selectNote}
+          onFileDeleted={fileDeletedCounter}
+        />
       </div>
       <div className="w-3/4 text-left p-2">
-        <MdEditor content={selectedNote.content} />
+        <MdEditor note={selectedNote} onDelete={fileDeleted} />
       </div>
     </div>
   );
