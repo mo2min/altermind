@@ -1,12 +1,16 @@
 import React, { useReducer } from "react";
+import { TreeNote } from "./utils/types/notes";
 
 const ACTION_TYPES = {
   CHANGE_NOTEBOOK: "CHANGE_NOTEBOOK",
-  LOGOUT: "LOGOUT"
+  SET_SIDE_NOTES: "SET_SIDE_NOTES",
+  LOGOUT: "LOGOUT",
 };
 
 const initialState = {
-  notebook: {}
+  notebook: {},
+  sidenotes: [],
+  setSidenotes: (notes: TreeNote[]) => {},
 };
 
 const AppCtxt = React.createContext({ ...initialState });
@@ -16,16 +20,22 @@ function appReducer(state: any, action: any) {
     case ACTION_TYPES.CHANGE_NOTEBOOK:
       let notebook = {
         name: action.payload.name,
-        id: action.payload.id
+        id: action.payload.id,
       };
       return {
         ...state,
-        notebook
+        notebook,
       };
     case ACTION_TYPES.LOGOUT:
       return {
         ...state,
-        user: null
+        user: null,
+      };
+    case ACTION_TYPES.SET_SIDE_NOTES:
+      let { payload: sidenotes } = action;
+      return {
+        ...state,
+        sidenotes,
       };
     default:
       return state;
@@ -36,14 +46,21 @@ function CtxtProvider(props: any) {
   const [state, dispatch] = useReducer(appReducer, { ...initialState });
 
   function setNotebook(notebook: any) {
-    dispatch({ notebook: notebook, type: ACTION_TYPES.CHANGE_NOTEBOOK });
+    dispatch({ payload: notebook, type: ACTION_TYPES.CHANGE_NOTEBOOK });
+  }
+
+  function setSidenotes(sidenotes: TreeNote[]) {
+    dispatch({ payload: sidenotes, type: ACTION_TYPES.SET_SIDE_NOTES });
+    console.log();
   }
 
   return (
     <AppCtxt.Provider
       value={{
         notebook: state.notebook,
-        setNotebook
+        sidenotes: state.sidenotes,
+        setNotebook,
+        setSidenotes,
       }}
       {...props}
     />
