@@ -3,16 +3,49 @@ import SideNotes from "../components/notes/SideNotes";
 import { TreeNote } from "../utils/types/notes";
 import { AppCtxt } from "../Context";
 import { base64Decode } from "../utils/functions";
-import MdEditor from "../components/editors/MdEditor";
+import MdEditorContainer from "../components/editors/MdEditorContainer";
+import { configure, GlobalHotKeys } from "react-hotkeys";
+
+configure({
+  ignoreTags: [],
+});
+
+const keyMap = {
+  MD_PREVIEW: "Control+p",
+  MD_SAVE: "Control+s",
+  MOVE_UP: ["up"],
+  EDIT_MODE: ["e"],
+};
 
 export default function Home() {
   const [currNote, setCurrNote] = useState({} as any);
   const [contentChangedCounter, setContentChangedCounter] = useState(0);
-  const { setSidenotes } = React.useContext(AppCtxt);
+  const { setSidenotes, togglePreview, saveNote } = React.useContext(AppCtxt);
   const [eTag, setETag] = useState("" as any);
 
+  const handlers = {
+    MD_PREVIEW: (e: KeyboardEvent | undefined) => {
+      // Just Send events to child // OR fire only event and toggle from outside
+      togglePreview();
+    },
+    MD_SAVE: (e: KeyboardEvent | undefined) => {
+      // Just Send events to child
+      console.log("save logic");
+      saveNote(); // Just trigger function
+    },
+    EDIT_MODE: (e: KeyboardEvent | undefined) => {
+      console.log("in edit mode ");
+    },
+    MOVE_UP: (e: KeyboardEvent | undefined) => {
+      // You could prevent key e.preventDefault();
+      console.log("in move up");
+    },
+  };
+
+  // State context Stupidity
   useEffect(() => {
     async function fetchNotes() {
+      console.log("fetchNotes");
       const headersObj = new Headers({
         Authorization: `Token ${process.env.REACT_APP_GITHUB_TOKEN}`,
         Accept: "application/vnd.github.v3.raw",
@@ -24,7 +57,6 @@ export default function Home() {
           headers: headersObj,
         }
       );
-      console.log(data.status);
       if (data.status === 200) {
         const notes = (await data.json()) as TreeNote[];
         setSidenotes(notes);
@@ -73,7 +105,8 @@ export default function Home() {
           }}
         />
          */}
-        <MdEditor
+        <GlobalHotKeys keyMap={keyMap} handlers={handlers} />
+        <MdEditorContainer
           note={currNote}
           onChange={() => setContentChangedCounter(1 + contentChangedCounter)}
         />
